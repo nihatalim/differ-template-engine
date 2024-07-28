@@ -42,7 +42,10 @@ func main() {
 	differService := service.NewDifferService(templateRepository, executionResultRepository, nodifferApi, logger)
 	differController := controller.NewDifferController(differService, logger)
 
+	indexController := controller.NewIndexController()
+
 	svr := server.New(logger, []server.RegisterRoutesFunc{
+		indexController.RegisterRoutes,
 		userController.RegisterRoutes,
 		differController.RegisterRoutes,
 	})
