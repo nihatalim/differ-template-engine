@@ -1,0 +1,51 @@
+name: Docker Image CI
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      short_sha: ${{ steps.set-output.outputs.SHORT_SHA }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Extract short commit SHA
+      id: set-output
+      run: |
+        echo "SHORT_SHA=$(git rev-parse --short=6 HEAD)" >> $GITHUB_ENV
+        echo "SHORT_SHA=$(git rev-parse --short=6 HEAD)" >> $GITHUB_OUTPUT
+      
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag ${{ secrets.PRIVATE_REGISTRY}}/${{ secrets.PRIVATE_REGISTRY_APP_NAME}}:${{ env.SHORT_SHA }}
+
+    - name: Log in to private Docker registry
+      run: echo "${{ secrets.PRIVATE_REGISTRY_PASSWORD }}" | docker login ${{ secrets.PRIVATE_REGISTRY}} -u "${{ secrets.PRIVATE_REGISTRY_USERNAME }}" --password-stdin
+
+    - name: Push Docker image
+      run: docker push ${{ secrets.PRIVATE_REGISTRY}}/${{ secrets.PRIVATE_REGISTRY_APP_NAME}}:${{ env.SHORT_SHA }}
+  update-manifest:
+      runs-on: ubuntu-latest
+      needs: build
+
+      steps:
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.KUSTOMIZE_REPOSITORY}}
+          token: ${{ secrets.KUSTOMIZE_REPOSITORY_TOKEN }}
+          path: differ-kustomize
+
+      - name: Commit and push updated manifest to target repo
+        run: |
+          cd differ-kustomize
+          sed -i 's|image: ${{ secrets.PRIVATE_REGISTRY}}/${{ secrets.PRIVATE_REGISTRY_APP_NAME}}:.*|image: ${{ secrets.PRIVATE_REGISTRY}}/${{ secrets.PRIVATE_REGISTRY_APP_NAME}}:${{ env.SHORT_SHA }}|' ${{ secrets.PRIVATE_REGISTRY_APP_NAME}}/base/deployment.yml
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "Update image version to ${{ secrets.PRIVATE_REGISTRY}}/${{ secrets.PRIVATE_REGISTRY_APP_NAME}}:${{ env.SHORT_SHA }}"
+          git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.KUSTOMIZE_REPOSITORY_TOKEN }}
+        SHORT_SHA: ${{ needs.build.outputs.short_sha }}
