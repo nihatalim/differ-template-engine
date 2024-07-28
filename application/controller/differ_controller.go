@@ -41,6 +41,12 @@ func getUserId(ctx *fiber.Ctx) string {
 	return userIds[0]
 }
 
+// @Tags controller
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.DifferExecutionResponse
+// @Param 	requestBody 	body	request.DifferExecutionRequest 	true 	"DifferExecutionRequest"
+// @Router /differ/execute [post]
 func (d *DifferController) ProcessDifferExecute(ctx *fiber.Ctx) error {
 	var req request.DifferExecutionRequest
 	userId := getUserId(ctx)

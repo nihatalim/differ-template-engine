@@ -15,6 +15,38 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/differ/execute": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "controller"
+                ],
+                "parameters": [
+                    {
+                        "description": "DifferExecutionRequest",
+                        "name": "requestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.DifferExecutionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.DifferExecutionResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users/{userId}/templates": {
             "get": {
                 "consumes": [
@@ -206,6 +238,58 @@ const docTemplate = `{
                 },
                 "url": {
                     "type": "string"
+                }
+            }
+        },
+        "request.DifferExecutionRequest": {
+            "type": "object",
+            "properties": {
+                "execution": {
+                    "$ref": "#/definitions/request.ExecutionParameters"
+                },
+                "operationId": {
+                    "type": "string"
+                },
+                "templates": {
+                    "$ref": "#/definitions/request.TemplateIdentifications"
+                }
+            }
+        },
+        "request.ExecutionParameters": {
+            "type": "object",
+            "properties": {
+                "params": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "request.TemplateIdentification": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "request.TemplateIdentifications": {
+            "type": "object",
+            "properties": {
+                "left": {
+                    "$ref": "#/definitions/request.TemplateIdentification"
+                },
+                "right": {
+                    "$ref": "#/definitions/request.TemplateIdentification"
+                }
+            }
+        },
+        "response.DifferExecutionResponse": {
+            "type": "object",
+            "properties": {
+                "hasDifference": {
+                    "type": "boolean"
                 }
             }
         }

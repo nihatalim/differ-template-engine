@@ -57,9 +57,62 @@ definitions:
       url:
         type: string
     type: object
+  request.DifferExecutionRequest:
+    properties:
+      execution:
+        $ref: '#/definitions/request.ExecutionParameters'
+      operationId:
+        type: string
+      templates:
+        $ref: '#/definitions/request.TemplateIdentifications'
+    type: object
+  request.ExecutionParameters:
+    properties:
+      params:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
+  request.TemplateIdentification:
+    properties:
+      id:
+        type: integer
+    type: object
+  request.TemplateIdentifications:
+    properties:
+      left:
+        $ref: '#/definitions/request.TemplateIdentification'
+      right:
+        $ref: '#/definitions/request.TemplateIdentification'
+    type: object
+  response.DifferExecutionResponse:
+    properties:
+      hasDifference:
+        type: boolean
+    type: object
 info:
   contact: {}
 paths:
+  /differ/execute:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: DifferExecutionRequest
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/request.DifferExecutionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.DifferExecutionResponse'
+      tags:
+      - controller
   /users/{userId}/templates:
     get:
       consumes:
