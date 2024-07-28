@@ -5,6 +5,7 @@ import (
 	"differ-template-engine/application/controller"
 	"differ-template-engine/application/repository"
 	"differ-template-engine/application/service"
+	_ "differ-template-engine/docs"
 	"differ-template-engine/log"
 	"differ-template-engine/pkg/client/nodiffer"
 	"differ-template-engine/pkg/config"

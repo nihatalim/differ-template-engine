@@ -3,9 +3,10 @@ package server
 import (
 	"differ-template-engine/log"
 	"github.com/bytedance/sonic"
-	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/middleware/compress"
-	"github.com/gofiber/fiber/v3/middleware/pprof"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/compress"
+	"github.com/gofiber/fiber/v2/middleware/pprof"
+	"github.com/gofiber/swagger"
 )
 
 type Server struct {
@@ -32,7 +33,9 @@ func New(logger log.Logger, registerRoutesFunc []RegisterRoutesFunc) Server {
 
 	fiberApp.Use(pprof.New())
 
-	fiberApp.Use(func(ctx fiber.Ctx) error {
+	fiberApp.Get("/swagger/*", swagger.HandlerDefault)
+
+	fiberApp.Use(func(ctx *fiber.Ctx) error {
 		ctx.Set("Content-Type", "application/json")
 		return ctx.Next()
 	})

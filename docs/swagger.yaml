@@ -1,0 +1,130 @@
+definitions:
+  domain.Header:
+    properties:
+      type:
+        $ref: '#/definitions/domain.HeaderType'
+      value:
+        type: string
+    type: object
+  domain.HeaderType:
+    enum:
+    - static
+    - dynamic
+    type: string
+    x-enum-varnames:
+    - StaticHeaderType
+    - DynamicHeaderType
+  domain.Headers:
+    additionalProperties:
+      $ref: '#/definitions/domain.Header'
+    type: object
+  domain.Method:
+    enum:
+    - GET
+    type: string
+    x-enum-varnames:
+    - MethodGet
+  domain.Template:
+    properties:
+      content:
+        $ref: '#/definitions/domain.TemplateContent'
+      created_date:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      userId:
+        type: string
+    type: object
+  domain.TemplateContent:
+    properties:
+      headers:
+        $ref: '#/definitions/domain.Headers'
+      method:
+        $ref: '#/definitions/domain.Method'
+      url:
+        type: string
+    type: object
+  request.CreateTemplateRequest:
+    properties:
+      headers:
+        $ref: '#/definitions/domain.Headers'
+      method:
+        $ref: '#/definitions/domain.Method'
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /users/{userId}/templates:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: userId
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Template'
+            type: array
+      tags:
+      - controller
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CreateTemplateRequest
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateTemplateRequest'
+      - description: userId
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Template'
+      tags:
+      - controller
+  /users/{userId}/templates/{templateId}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: userId
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: templateId
+        in: path
+        name: templateId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      tags:
+      - controller
+swagger: "2.0"

@@ -6,7 +6,7 @@ import (
 	"differ-template-engine/application/request"
 	"differ-template-engine/log"
 	"github.com/bytedance/sonic"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"strconv"
 )
 
@@ -38,7 +38,13 @@ func (u *UserController) RegisterRoutes(f *fiber.App) {
 	f.Post(EndpointCreateTemplateByUserId, u.ProcessCreateTemplateByUserId)
 }
 
-func (u *UserController) ProcessGetTemplatesByUserId(ctx fiber.Ctx) error {
+// @Tags controller
+// @Accept json
+// @Produce json
+// @Success 200 {object} []domain.Template
+// @Param 	userId 	path	string	true "userId"
+// @Router /users/{userId}/templates [get]
+func (u *UserController) ProcessGetTemplatesByUserId(ctx *fiber.Ctx) error {
 	userId := ctx.Params("userId")
 	if userId == "" {
 		return customerror.ErrUserIdIsNotValid
@@ -50,7 +56,14 @@ func (u *UserController) ProcessGetTemplatesByUserId(ctx fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).Send(resp)
 }
 
-func (u *UserController) ProcessDeleteTemplateByUserIdAndTemplateId(ctx fiber.Ctx) error {
+// @Tags controller
+// @Accept json
+// @Produce json
+// @Success 204
+// @Param 	userId 		path 	string 	true 	"userId"
+// @Param 	templateId 	path 	string 	true 	"templateId"
+// @Router /users/{userId}/templates/{templateId} [delete]
+func (u *UserController) ProcessDeleteTemplateByUserIdAndTemplateId(ctx *fiber.Ctx) error {
 	userId := ctx.Params("userId")
 	if userId == "" {
 		return customerror.ErrUserIdIsNotValid
@@ -73,7 +86,14 @@ func (u *UserController) ProcessDeleteTemplateByUserIdAndTemplateId(ctx fiber.Ct
 	return ctx.SendStatus(fiber.StatusNoContent)
 }
 
-func (u *UserController) ProcessCreateTemplateByUserId(ctx fiber.Ctx) error {
+// @Tags controller
+// @Accept json
+// @Produce json
+// @Success 201 {object} domain.Template
+// @Param 	requestBody 	body	request.CreateTemplateRequest 	true 	"CreateTemplateRequest"
+// @Param 	userId 	path	string	true "userId"
+// @Router /users/{userId}/templates [post]
+func (u *UserController) ProcessCreateTemplateByUserId(ctx *fiber.Ctx) error {
 	var req request.CreateTemplateRequest
 	body := ctx.Body()
 

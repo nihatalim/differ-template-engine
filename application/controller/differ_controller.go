@@ -6,7 +6,7 @@ import (
 	"differ-template-engine/log"
 	"differ-template-engine/response"
 	"github.com/bytedance/sonic"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
 const EndpointDifferExecute = "/differ/execute"
@@ -31,7 +31,7 @@ func (d *DifferController) RegisterRoutes(f *fiber.App) {
 	f.Post(EndpointDifferExecute, d.ProcessDifferExecute)
 }
 
-func getUserId(ctx fiber.Ctx) string {
+func getUserId(ctx *fiber.Ctx) string {
 	headers := ctx.GetReqHeaders()
 	userIds := headers["x-userid"]
 	if len(userIds) == 0 {
@@ -41,7 +41,7 @@ func getUserId(ctx fiber.Ctx) string {
 	return userIds[0]
 }
 
-func (d *DifferController) ProcessDifferExecute(ctx fiber.Ctx) error {
+func (d *DifferController) ProcessDifferExecute(ctx *fiber.Ctx) error {
 	var req request.DifferExecutionRequest
 	userId := getUserId(ctx)
 	if userId == "" {
