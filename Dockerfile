@@ -23,10 +23,11 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 
 # Çalışma dizinini ayarlayın
-WORKDIR /root/
+WORKDIR /app
 
 # Derlenmiş uygulamayı kopyalayın
 COPY --from=builder /app/differ-template-engine .
-
+COPY --from=build /app/resources/ /app/resources
+COPY --from=build /app/configs/ /app/configs
 # Uygulamanızı çalıştırın
 CMD ["./differ-template-engine"]
