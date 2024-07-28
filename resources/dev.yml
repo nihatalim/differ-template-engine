@@ -1,0 +1,13 @@
+dev:
+  port: ":8082"
+  postgresql:
+    host: ${POSTGRESQL_HOST}
+    port: ${POSTGRESQL_PORT}
+    database: ${POSTGRESQL_DB}
+    username: ${POSTGRESQL_USERNAME}
+    password: ${POSTGRESQL_PASSWORD}
+  clients:
+    nodiffer:
+      host: "https://differ-engine.nihatalim.com.tr"
+      timeout: 10s
+      retry: 3

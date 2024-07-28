@@ -1,0 +1,11 @@
+stage:
+  port: ":8082"
+  postgresql:
+    host: localhost
+    port: 5432
+    database: db
+  clients:
+    nodiffer:
+      host: "http://localhost:9090"
+      timeout: 10s
+      retry: 3
